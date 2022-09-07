@@ -1,6 +1,5 @@
 from sympy import preview
 import discord
-from discord.ext import commands
 from io import BytesIO
 import re
 import os
@@ -13,7 +12,7 @@ latexPattern = re.compile(r"```latex\n.*?```", re.S)
 intents = discord.Intents.default()
 intents.messages = True
 
-client = commands.Bot(command_prefix=",", help_command=None, intents=intents)
+client = discord.Client(intents=intents)
 
 @client.event
 async def on_message(msg: discord.Message):

@@ -3,7 +3,16 @@ import discord
 from io import BytesIO
 import re
 import os
+import signal
+import sys
 from dotenv import load_dotenv
+
+def onExit(_signo, _stack_frame):
+	print("Performing safe shutdown")
+	sys.exit(0)
+
+signal.signal(signal.SIGINT, onExit)
+signal.signal(signal.SIGTERM, onExit)
 
 load_dotenv()
 
@@ -31,8 +40,9 @@ async def on_message(msg: discord.Message):
 				euler=False,
 				dvioptions=["-D", "160", "-bg", "Transparent", "-fg", "rgb 0.8666666666666667 0.8705882352941177 0.8745098039215686"]
 			)
-		except RuntimeError:
+		except RuntimeError as err:
 			await msg.reply("Invalid syntax")
+			print(err)
 			return
 
 		buf.seek(0)
@@ -43,5 +53,6 @@ async def on_message(msg: discord.Message):
 token = os.getenv("DISTEX_TOKEN")
 if token is None:
 	print("DISTEX_TOKEN is not set")
-	exit(-1)
+	sys.exit(1)
+
 client.run(token)
